@@ -171,5 +171,84 @@ USE  shopdb;
  END // ;
  
  CALL myproc();
+ 
+ -- 3.4트리거 10장
+ 
+ INSERT INTO membertbl VALUES('Firgure','연아','경기도 군포시 당정동');
+ 
+ SELECT * FROM membertbl;
+ -- '연아'인 회원의 주소를 '서울 강남구 역삼동'으로 변경해보자
+ UPDATE membertbl SET memberAddress = '서울 강남구 역삼동 ' WHERE memberName ='연아';
+ 
+ SELECT * FROM membertbl;
+ 
+ -- '연아'가 회원탈퇴해서 회원 테이블에 삭제를 해야한다.
+ DELETE FROM membertbl WHERE memberName='연아';
+ 
+ SELECT * FROM membertbl;
+ 
+ -- '연아'가 예전에 회원이었다는 정보는 어디에도 기록이 되어있지 않았다.
+ -- 혹시라도 '연아'가 나중에 이 쇼핑몰의 회원이었다는 증명을 요구한다면 그걸 증명해줄 방법이 없다.
+ 
+ 
+ -- 위와 같은 사태를 방지 하기 위해 회원 테이블에서 행 데이터를 삭제 할경우 다른 테이블에 지워진 뎅;터와 젇불어 지워진 날짜까지 기록해주보자.
+ -- 먼저 지워진 데이를 보관할 테이블 (deletemembertmbl)을 만들어보자
+ CREATE TABLE  deletemembertmbl(
+ memberID CHAR(8),
+ memberName CHAR(5),
+ memberAddress CHAR(20),
+ dletedData DATE 
+ );
+
+USE shopdb;
+-- 회원 테이블에 삭제 작업이 일어나면 백업테이블에 태워진 데이터가 기록되는 트리거 생성한다.
+--  교재 소스코드 복붙한거 혼자서 치면 자꾸 오류가 발생한다.
+ 
+USE shopdb;
+SELECT * FROM membertbl;
+
+-- 당탕이를 삭제한다.
+
+DELETE FROM shopdb.membertbl WHERE memberName='당탕이';
+
+SELECT * FROM membertbl;
+
+SELECT * FROM shopdb.deletemembertmbl;
+
+DELETE FROM membertbl WHERE memberName='당탕이';
+
+SHOW TABLES LIKE '%deleted%';
+ USE shopdb;
+SELECT *FROM 
+CREATE TABLE  deletedMemberTBL(
+ memberID CHAR(8),
+ memberName CHAR(5),
+ memberAddress CHAR(20),
+ dletedData DATE 
+ );
+SELECT * FROM deletedMemberTBL;
 
 
+-- 3.4 데이터 베이스 백업 및 관리
+-- 3.4.1 백업과 복원
+-- 데이터베이스가 해야하는 주요 업무중하나가 데이터 백업하고 문제가 생기면 복원하는거다.
+
+USE shopdb;
+SELECT * FROM producttbl;
+
+-- 사고->producttbl 모든 테이블삭제
+
+-- delete문을 실행할때 where 절이 없으면 모든 데이터가 제거가 된다. 이거 ㄴ6장에서 설명하겠다.
+
+Delete FROM producttbl;
+
+-- 사고친후에 진짜로 삭제 되었는지 확인\
+SELECT * FROM producttbl;
+
+-- 백업한 데이터를 복원해서 실수로 삭제한거 복원
+-- 사용 ㅈ중인 DB를 복원하면 문제가 생길수도 있으니까 , 우선 데이터 베이스를 shopdb에서 다른 db로 변경해야한다.
+USE mysql;
+
+USE shopdb;
+
+SELECT * FROM producttbl;
