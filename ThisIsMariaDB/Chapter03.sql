@@ -163,15 +163,17 @@ USE  shopdb;
 -- 호출 시점에 프로시저 이름과 필요한 매개변수만 넘기면, 미리 정의된 SQL 문들이 서버에서 순차적으로 실행됩니다.
 -- 예: 복잡한 데이터 조작, 비즈니스 로직의 일부를 데이터베이스 안에서 실행하도록 구현.
 
--- 책에 구문이 잘못됨
- CREATE PROCEDURE myproc()
- BEGIN 
- SELECT * FROM  membertbl WHERE memberName ='당탕이';
- SELECT * FROM producttbl WHERE productName='냉장고';
- END // ;
- 
- CALL myproc();
- 
+-- 책에 구문이 잘못된거 수정함
+ delimiter $$
+create procedure  myProc() begin
+    select *from membertbl where memberName='당탕이';
+    select  * from  prodicttbl where productName ='냉장고';
+
+end $$
+
+delimiter ;
+
+call myProc();
  -- 3.4트리거 10장
  
  INSERT INTO membertbl VALUES('Firgure','연아','경기도 군포시 당정동');
@@ -202,7 +204,18 @@ USE  shopdb;
 
 USE shopdb;
 -- 회원 테이블에 삭제 작업이 일어나면 백업테이블에 태워진 데이터가 기록되는 트리거 생성한다.
---  교재 소스코드 복붙한거 혼자서 치면 자꾸 오류가 발생한다.
+-- 트리거 테이블 작성
+delimiter $$
+create trigger  trg_deletedMemberTBL -- 트리거 이름
+after delete  -- 삭제후에 작동하게 지정
+on membertbl -- 트리거를 부착할 테이블
+for each row  -- 각 행마다 적용시킴
+BEGIN
+    -- old테이블 내용을 백업 테이블에 삽입
+    insert into  deletedmembertbl
+        values (OLD.memberID,OLD.memberName,OLD.memberAddress,curdate());
+end $$
+delimiter ;
  
 USE shopdb;
 SELECT * FROM membertbl;
