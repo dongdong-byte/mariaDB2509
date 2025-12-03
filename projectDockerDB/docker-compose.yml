@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  # 1. 데이터베이스 서비스 (어제 만든 이미지 사용)
+  car-db:
+    image: killdong/car-db-image:latest
+    container_name: car-db-container
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=car_rental_db
+    networks:
+      - my-network
+
+  # 2. 자바 스프링 부트 서비스 (오늘 만들 이미지)
+  spring-app:
+    # 이미지를 killdong/project-docker-db-test 라는 이름으로 빌드합니다.
+    image: killdong/projectest-test-db-docker
+    build: .
+    container_name: my-spring-container
+    ports:
+      - "8080:8080"
+    depends_on:
+      - car-db # DB가 먼저 켜진 뒤에 실행됨
+    networks:
+      - my-network
+
+# 두 컨테이너가 서로 통신할 수 있는 가상의 네트워크 생성
+networks:
+  my-network:
+    driver: bridge

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>렌트카 DB 관리자</title>
+    <style>
+        body { padding: 40px; text-align: center; font-family: 'Arial', sans-serif; background-color: #f4f4f9; }
+        h1 { color: #333; margin-bottom: 30px; }
+        .btn-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin-bottom: 40px; }
+        button {
+            padding: 15px 30px; font-size: 16px; cursor: pointer;
+            background-color: #007bff; color: white; border: none; border-radius: 8px;
+            transition: background 0.3s;
+        }
+        button:hover { background-color: #0056b3; }
+        .erd-box { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); display: inline-block; }
+        img { max-width: 100%; height: auto; }
+    </style>
+</head>
+<body>
+<h1>🚗 Car Rental Database Admin</h1>
+
+<div class="btn-container">
+    <button onclick="location.href='/view?tableName=brand'">BRAND (제조사)</button>
+    <button onclick="location.href='/view?tableName=branch'">BRANCH (지점)</button>
+    <button onclick="location.href='/view?tableName=pickup_zone'">PICKUP ZONE</button>
+    <button onclick="location.href='/view?tableName=model'">MODEL (차량제원)</button>
+    <button onclick="location.href='/view?tableName=price_policy'">PRICE (가격정책)</button>
+    <button onclick="location.href='/view?tableName=car'">CAR (차량실물)</button>
+    <button onclick="location.href='/view?tableName=users'">USERS (회원)</button>
+    <button onclick="location.href='/view?tableName=reservation'">RESERVATION (예약)</button>
+</div>
+
+<div class="erd-box">
+    <h3>Current Database Schema</h3>
+    <img src="/images/erd.png" alt="ERD Diagram" onerror="this.style.display='none'">
+</div>
+</body>
+</html>
