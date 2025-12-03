@@ -1,32 +1,43 @@
 version: '3.8'
 
 services:
-  # 1. 데이터베이스 서비스 (어제 만든 이미지 사용)
+  # 1. 데이터베이스 서비스 (MariaDB로 변경함)
   car-db:
-    image: killdong/car-db-image:latest
+    image: mariadb:11   # <-- mysql:8.0에서 mariadb:11로 변경!
     container_name: car-db-container
     ports:
       - "3306:3306"
     environment:
-      - MYSQL_ROOT_PASSWORD=root
-      - MYSQL_DATABASE=car_rental_db
+      # MariaDB는 MYSQL_ 접두어를 그대로 호환해서 사용 가능합니다.
+      - MYSQL_ROOT_PASSWORD=1234  # properties 파일 비번과 일치시킴 (중요!)
+      - MYSQL_DATABASE=projecttest2 # properties의 DB명과 일치시킴
+    volumes:
+      # 내 컴퓨터의 init-sql 폴더 안에 있는 SQL 파일을 실행
+      - ./init-sql:/docker-entrypoint-initdb.d
     networks:
       - my-network
+    command:
+      # 한글 깨짐 방지 설정 강제 적용
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
 
-  # 2. 자바 스프링 부트 서비스 (오늘 만들 이미지)
+  # 2. 자바 스프링 부트 서비스
   spring-app:
-    # 이미지를 killdong/project-docker-db-test 라는 이름으로 빌드합니다.
-    image: killdong/projectest-test-db-docker
+    image: killdong/project-testdb-docker-app:v1  # 이미지 이름 깔끔하게 변경
     build: .
-    container_name: my-spring-container
+    container_name: car-testdb-container
     ports:
       - "8080:8080"
     depends_on:
-      - car-db # DB가 먼저 켜진 뒤에 실행됨
+      - car-db
     networks:
       - my-network
+    environment:
+      # 컨테이너 안에서 실행될 때 DB 주소를 확실하게 다시 지정
+      - SPRING_DATASOURCE_URL=jdbc:mariadb://car-db:3306/projecttest2?serverTimezone=Asia/Seoul&useUnicode=true&characterEncoding=utf8
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=1234
 
-# 두 컨테이너가 서로 통신할 수 있는 가상의 네트워크 생성
 networks:
   my-network:
     driver: bridge
