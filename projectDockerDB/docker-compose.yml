@@ -14,6 +14,7 @@ services:
     volumes:
       # 내 컴퓨터의 init-sql 폴더 안에 있는 SQL 파일을 실행
       - ./init-sql:/docker-entrypoint-initdb.d
+      - ./db_data:/var/lib/mysql
     networks:
       - my-network
     command:
