@@ -4,7 +4,7 @@ FROM amazoncorretto:21
 WORKDIR /app
 
 # 3. 빌드된 jar 파일 위치 변수
-ARG JAR_FILE=build/libs/*.jar
+ARG JAR_FILE=*.jar
 
 # 4. jar 파일을 도커 안으로 복사
 COPY ${JAR_FILE} app.jar
